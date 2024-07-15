@@ -26,6 +26,24 @@ class TransactionRepository extends TransactionInterface{
             throw new Error("Failed to create transaction")
         }
     }
+
+    async getTransanctionsByUserId(user_id) {
+        try{
+            const transactions = await Transactions.findOne({where: {user_id: user_id}})
+            return transactions
+        }catch(err){
+            return null
+        }
+    }
+
+    async getAllTransactions(){
+        try{
+            const transactions = await Transactions.findAll()
+            return transactions
+        }catch(err){
+            return null
+        }
+    }
 }
 
 module.exports = { TransactionRepository }
