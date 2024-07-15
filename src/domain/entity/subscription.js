@@ -11,6 +11,7 @@ const Subscription = sequelize.define('Subscription', {
     user_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        unique: true,
     },
     plan_id: {
         type: DataTypes.INTEGER,

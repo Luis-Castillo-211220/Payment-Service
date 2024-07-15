@@ -2,7 +2,7 @@ const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../database/postgresql');
 const { Subscription } = require("./subscription")
 
-const Transaction = sequelize.define('Transaction', {
+const Transactions = sequelize.define('Transaction', {
     transaction_id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -30,6 +30,6 @@ const Transaction = sequelize.define('Transaction', {
     },
 });
 
-Transaction.belongsTo(Subscription, {foreignKey: 'subscription_id'})
+Transactions.belongsTo(Subscription, {foreignKey: 'subscription_id'})
 
-module.exports = { Transaction }   
+module.exports = { Transactions }   

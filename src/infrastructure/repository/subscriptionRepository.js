@@ -11,7 +11,12 @@ class SubscriptionRepository extends SubscriptionInterface{
             if(!plan){
                 throw new Error('Invalid plan_id')
             }else{
-                console.log("part2")
+
+                const SubscriptionAux = await Subscription.findOne({where: {user_id}})
+
+                if(SubscriptionAux){
+                    return null
+                }
 
                 const start_date = new Date()
                 const durationInMonths = parseInt(plan.duration)
