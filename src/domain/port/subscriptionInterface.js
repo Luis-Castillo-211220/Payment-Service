@@ -52,7 +52,15 @@ class SubscriptionInterface{
         throw new Error("deleteSubscriptionByIdUser method not implemented")
     }
 
-
+    /**
+     * 
+     * @param {Number} user_id 
+     * @param {Number} newPlan_id 
+     * @returns {Promise<Subscription|null>}
+     */
+    async updatePlanSubscription(user_id, newPlan_id){
+        throw new Error("updatePlanSubscription method not implemented")
+    }
 }
 
 module.exports = SubscriptionInterface;

@@ -107,6 +107,48 @@ class SubscriptionRepository extends SubscriptionInterface{
             return null
         }
     }
+
+    async updatePlanSubscription(user_id, newPlan_id){
+        const transactionInst = await sequelize.transaction();
+        try{
+            const subscription = await Subscription.findOne({where: {user_id}})
+            if(subscription){
+                if(subscription.status === 'Active'){
+                    return null
+                }
+                const plan = await SubscriptionPlan.findByPk(newPlan_id)
+                const start_date = new Date()
+                const durationInMonths = parseInt(plan.duration)
+                const end_date = moment(start_date).add(durationInMonths, 'months').toDate()
+
+                await subscription.update({
+                    plan_id: newPlan_id,
+                    start_date: start_date,
+                    end_date: end_date,
+                    status: 'Active'
+                }, transactionInst)
+                await subscription.save()
+
+                const transactionData ={
+                    user_id,
+                    subscription_id: subscription.subscription_id,
+                    amount: plan.price,
+                    transaction_date: start_date,
+                    payment_method: 'Paypal',
+                }
+
+                const createdTransaction = await Transactions.create(transactionData, { transactionInst })
+                await transactionInst.commit();
+
+                return subscription
+            }else{
+                return null
+            }
+        }catch(err){
+            console.log(err)
+            return null
+        }
+    }
 }
 
 module.exports = { SubscriptionRepository }

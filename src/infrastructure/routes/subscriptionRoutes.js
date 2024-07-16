@@ -4,7 +4,8 @@ const { createSubscriptionController,
     getAllSubscriptionsController,
     getSubscriptionByIdUserController,
     deleteSubscriptionByIdUserController,
-    updateSubscriptionStatusController
+    updateSubscriptionStatusController,
+    updatePlanSubscriptionController
  } = require("../dependencies/subscriptionDependencies")
 
 const subscriptionRouter = express.Router()
@@ -14,5 +15,6 @@ subscriptionRouter.get('/', getAllSubscriptionsController.run.bind(getAllSubscri
 subscriptionRouter.get('/:user_id', getSubscriptionByIdUserController.run.bind(getSubscriptionByIdUserController))
 subscriptionRouter.delete('/:user_id', deleteSubscriptionByIdUserController.run.bind(deleteSubscriptionByIdUserController))
 subscriptionRouter.put('/', updateSubscriptionStatusController.run.bind(updateSubscriptionStatusController))
+subscriptionRouter.put('/:user_id/:newPlan_id', updatePlanSubscriptionController.run.bind(updatePlanSubscriptionController))
 
 module.exports = { subscriptionRouter }
