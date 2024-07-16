@@ -85,6 +85,28 @@ class SubscriptionRepository extends SubscriptionInterface{
             throw new Error('Error while deleting subscription')
         }
     }
+
+    async updateSubscriptionStatus(user_id, dateNow) {
+
+        try{
+            const subscription = await Subscription.findOne({where: {user_id}})
+            if(subscription){
+                const dateConvert = moment(dateNow, moment.ISO_8601, true).toDate();
+                if(dateConvert >= subscription.end_date){
+                    await subscription.update({ status: 'Inactive' })
+                    await subscription.save()
+                    return false
+                }else{
+                    return true
+                }
+            }else{
+                return null
+            }
+        }catch(err){
+            console.log(err)
+            return null
+        }
+    }
 }
 
 module.exports = { SubscriptionRepository }

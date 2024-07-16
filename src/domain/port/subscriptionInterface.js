@@ -33,6 +33,15 @@ class SubscriptionInterface{
     }
 
     //ACTUALIZAR PENDIENTE
+    /**
+     * @param {Number} user_id
+     * @param {String} dateNow
+     * @returns {Promise<Subscription|null>}
+     */
+    async updateSubscriptionStatus(user_id, dateNow){
+        throw new Error("updateSubscriptionStatus method not implemented")
+    }
+
 
     /**
      * 
@@ -42,6 +51,8 @@ class SubscriptionInterface{
     async deleteSubscriptionByIdUser(user_id){
         throw new Error("deleteSubscriptionByIdUser method not implemented")
     }
+
+
 }
 
 module.exports = SubscriptionInterface;

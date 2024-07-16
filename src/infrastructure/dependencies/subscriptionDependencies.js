@@ -8,7 +8,8 @@ const { GetSubscriptionByIdUserUseCase } = require("../../application/subscripti
 const { GetSubscriptionByIdUserController } = require("../controller/subscription/getSubscriptionByIdUserController")
 const { DeleteSubscriptionByIdUserUseCase } = require("../../application/subscription/deleteSubscriptionByIdUserUeCase")
 const { DeleteSubscriptionByIdUserController } = require("../controller/subscription/deleteSubscriptionByIdUserController")
-
+const { UpdateSubscriptionStatusUseCase } = require("../../application/subscription/updateSubscriptionStatusUseCase")
+const { UpdateSubscriptionStatusController } = require("../controller/subscription/updateSubscriptionStatusController")
 
 const subscriptionRepository = new SubscriptionRepository()
 
@@ -24,9 +25,12 @@ const getSubscriptionByIdUserController = new GetSubscriptionByIdUserController(
 const deleteSubscriptionUseCase = new DeleteSubscriptionByIdUserUseCase(subscriptionRepository)
 const deleteSubscriptionByIdUserController = new DeleteSubscriptionByIdUserController(deleteSubscriptionUseCase)
 
+const updateSubscriptionStatusUseCase = new UpdateSubscriptionStatusUseCase(subscriptionRepository)
+const updateSubscriptionStatusController = new UpdateSubscriptionStatusController(updateSubscriptionStatusUseCase)
 
 module.exports = { createSubscriptionController,
     getAllSubscriptionsController,
     getSubscriptionByIdUserController,
-    deleteSubscriptionByIdUserController
+    deleteSubscriptionByIdUserController,
+    updateSubscriptionStatusController
 }
