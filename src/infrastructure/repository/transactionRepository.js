@@ -12,12 +12,14 @@ class TransactionRepository extends TransactionInterface{
                return null;
             }
             const transaction_date = subscriptionAux.start_date 
+            const amount = subscriptionAux.price
 
             const transaction = await Transactions.create(
                 {
                     user_id: user_id,
                     subscription_id: subscription_id,
                     transaction_date: transaction_date,
+                    amount: amount,
                     status: status || 'Paypal'
                 }
             )

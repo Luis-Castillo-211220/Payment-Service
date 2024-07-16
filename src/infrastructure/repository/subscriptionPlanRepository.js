@@ -46,7 +46,6 @@ class SubscriptionPlanRepository extends SubscriptionPlanInterface {
     async updateByIdSuscritptionPlanPrice(plan_id, newPrice){
         try{
             const plan = await SubscriptionPlan.findByPk(plan_id)
-            console.log(plan_id, newPrice)
             if(plan){
                 await plan.update({price: newPrice})
                 // const updatedPlan = await SubscriptionPlan.update({price: newPrice})

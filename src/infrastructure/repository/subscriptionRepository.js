@@ -2,16 +2,18 @@ const { Subscription } = require("../../domain/entity/subscription")
 const SubscriptionInterface = require("../../domain/port/subscriptionInterface")
 const { SubscriptionPlan } = require("../../domain/entity/subscriptionPlan")
 const  moment = require("moment")
+const { Transactions } = require("../../domain/entity/transaction")
+const { sequelize } = require("../../database/postgresql")
 
 class SubscriptionRepository extends SubscriptionInterface{
     async createSubscription(user_id, plan_id, start_date, end_date, status){
+        const transactionInst = await sequelize.transaction();
         try{
             const plan = await SubscriptionPlan.findByPk(plan_id)
-            console.log(plan)
-            if(!plan){
-                throw new Error('Invalid plan_id')
-            }else{
 
+            if(!plan){
+                return null
+            }else{
                 const SubscriptionAux = await Subscription.findOne({where: {user_id}})
 
                 if(SubscriptionAux){
@@ -29,16 +31,26 @@ class SubscriptionRepository extends SubscriptionInterface{
                     end_date,
                     status: status || 'Active'
                 }, {
-                    fields: ["user_id", "plan_id", "start_date", "end_date", "status"]
-                })
+                    fields: ["user_id", "plan_id", "start_date", "end_date", "status"], 
+                    transactionInst
+                }); 
                 
-                console.log(createdSubscription)
-    
-                return createdSubscription;
+                const transactionData ={
+                    user_id,
+                    subscription_id: createdSubscription.subscription_id,
+                    amount: plan.price,
+                    transaction_date: start_date,
+                    payment_method: 'Paypal',
+                }
+
+                const createdTransaction = await Transactions.create(transactionData, { transactionInst })
+                await transactionInst.commit();
+
+                return createdSubscription
             }
 
         }catch(err){
-            throw new Error('Error while creating subscription')
+            return null
         }
     }
 

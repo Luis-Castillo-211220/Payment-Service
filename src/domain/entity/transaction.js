@@ -20,6 +20,10 @@ const Transactions = sequelize.define('Transaction', {
             key: 'subscription_id',
         },
     },
+    amount: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
     transaction_date:{
         type: DataTypes.DATE,
         allowNull: false,
