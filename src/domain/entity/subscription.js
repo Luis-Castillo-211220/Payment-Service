@@ -33,7 +33,7 @@ const Subscription = sequelize.define('Subscription', {
     status: {
         type: DataTypes.STRING,
         allowNull: false,
-        defaultValue: 'Active', //Active
+        defaultValue: 'Inactive', //Active
     }
 });
 

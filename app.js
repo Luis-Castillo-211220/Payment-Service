@@ -13,11 +13,6 @@ app.use('/api/v1/subscriptions_plans/', subscriptionPlanRouter)
 app.use('/api/v2/subscriptions/', subscriptionRouter)
 app.use('/api/v3/transactions/', transactionRouter)
 
-// app.listen(PORT, async () => {
-//     await connectDB();
-//     await sequelize.sync()
-//     console.log(`Server is running on port ${PORT}`);
-// });
 
 connectDB().then(() => {
     app.listen(PORT, () => {

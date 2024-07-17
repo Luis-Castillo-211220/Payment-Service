@@ -4,6 +4,7 @@ const { SubscriptionPlan } = require("../../domain/entity/subscriptionPlan")
 const  moment = require("moment")
 const { Transactions } = require("../../domain/entity/transaction")
 const { sequelize } = require("../../database/postgresql")
+const paypalAdapter = require("../../payment/paypalAdapter")
 
 class SubscriptionRepository extends SubscriptionInterface{
     async createSubscription(user_id, plan_id, start_date, end_date, status){
@@ -13,42 +14,52 @@ class SubscriptionRepository extends SubscriptionInterface{
 
             if(!plan){
                 return null
-            }else{
-                const SubscriptionAux = await Subscription.findOne({where: {user_id}})
-
-                if(SubscriptionAux){
-                    return null
-                }
-
-                const start_date = new Date()
-                const durationInMonths = parseInt(plan.duration)
-                const end_date = moment(start_date).add(durationInMonths, 'months').toDate()
-    
-                const createdSubscription = await Subscription.create({
-                    user_id,
-                    plan_id,
-                    start_date,
-                    end_date,
-                    status: status || 'Active'
-                }, {
-                    fields: ["user_id", "plan_id", "start_date", "end_date", "status"], 
-                    transactionInst
-                }); 
-                
-                const transactionData ={
-                    user_id,
-                    subscription_id: createdSubscription.subscription_id,
-                    amount: plan.price,
-                    transaction_date: start_date,
-                    payment_method: 'Paypal',
-                }
-
-                const createdTransaction = await Transactions.create(transactionData, { transactionInst })
-                await transactionInst.commit();
-
-                return createdSubscription
             }
 
+            const existingSubscription = await Subscription.findOne({where: {user_id}})
+
+            if(existingSubscription){
+                return null
+            }
+
+            const start_date = new Date()
+            const durationInMonths = parseInt(plan.duration)
+            const end_date = moment(start_date).add(durationInMonths, 'months').toDate()
+
+            const paymentResult = await paypalAdapter.createPayment(plan.price)
+            if(paymentResult.status !== 'success'){
+                return null
+            }
+
+            const paypal_payment_id = paymentResult.id
+            const approvalUrl = paymentResult.approvalUrl
+            
+            const createdSubscription = await Subscription.create({
+                user_id,
+                plan_id,
+                start_date,
+                end_date,
+            }, {
+                fields: ["user_id", "plan_id", "start_date", "end_date", "status"], 
+                transactionInst
+            }); 
+            
+            const transactionData ={
+                user_id,
+                subscription_id: createdSubscription.subscription_id,
+                amount: plan.price,
+                transaction_date: start_date,
+                paypal_payment_id: paypal_payment_id,
+                approval_url: approvalUrl,
+                status: 'pending',
+                payment_method: 'Paypal',
+                
+            }
+
+            const createdTransaction = await Transactions.create(transactionData, { transaction: transactionInst })
+            await transactionInst.commit();
+
+            return createdSubscription
         }catch(err){
             return null
         }
@@ -121,6 +132,14 @@ class SubscriptionRepository extends SubscriptionInterface{
                 const durationInMonths = parseInt(plan.duration)
                 const end_date = moment(start_date).add(durationInMonths, 'months').toDate()
 
+                const paymentResult = await paypalAdapter.createPayment(plan.price)
+                if(paymentResult.status !== 'success'){
+                    return null
+                }
+
+                const paypal_payment_id = paymentResult.id
+                const approvalUrl = paymentResult.approvalUrl
+
                 await subscription.update({
                     plan_id: newPlan_id,
                     start_date: start_date,
@@ -134,6 +153,9 @@ class SubscriptionRepository extends SubscriptionInterface{
                     subscription_id: subscription.subscription_id,
                     amount: plan.price,
                     transaction_date: start_date,
+                    paypal_payment_id: paypal_payment_id,
+                    approval_url: approvalUrl,
+                    status: 'pending',
                     payment_method: 'Paypal',
                 }
 

@@ -26,6 +26,15 @@ class TransactionInterface{
     async getAllTransactions(){
         throw new Error("getAllTransactions method not implemented")
     }
+
+    /**
+     * 
+     * @param {String} paypal_payment_id
+     * @returns {Promise<Transactions|null>}
+     */
+    async updateStatusTransactionsByPaypalId(paypal_payment_id){
+        throw new Error("updateStatusTransactionsByPaypalId method not implemented")
+    }
 }
 
 module.exports = TransactionInterface

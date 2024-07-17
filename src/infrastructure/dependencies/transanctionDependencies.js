@@ -6,7 +6,8 @@ const { GetTransactionByIdUserUseCase } = require("../../application/transaction
 const { GetTransactionByIdUserController } = require("../controller/transaction/getTransactionByIdUserController")
 const { GetAllTransactionsUseCase }  = require("../../application/transaction/getAllTransactionsUseCase")
 const { GetAllTransactionsController } = require("../controller/transaction/getAllTransactionsController")
-
+const { UpdateStatusTransactionByPaypalIdUseCase } = require("../../application/transaction/updateStatusTransactionByPaypalIdUseCase")
+const { UpdateStatusTransactionByPaypalIdController } = require("../controller/transaction/updateStatusTransactionByPaypalIdController")
 
 const transactionRepository = new TransactionRepository()
 
@@ -19,7 +20,11 @@ const getTransactionByIdUserController = new GetTransactionByIdUserController(ge
 const getAllTransactionsUseCase = new GetAllTransactionsUseCase(transactionRepository)
 const getAllTransactionsController = new GetAllTransactionsController(getAllTransactionsUseCase)
 
+const updateStatusTransactionByPaypalIdUseCase = new UpdateStatusTransactionByPaypalIdUseCase(transactionRepository)
+const updateStatusTransactionByPaypalIdController = new UpdateStatusTransactionByPaypalIdController(updateStatusTransactionByPaypalIdUseCase)
+
 module.exports = { createTransactionController,
     getTransactionByIdUserController,
     getAllTransactionsController,
+    updateStatusTransactionByPaypalIdController,
 }

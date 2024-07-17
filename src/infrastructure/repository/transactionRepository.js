@@ -1,11 +1,12 @@
 const { Subscription } = require("../../domain/entity/subscription")
 const { Transactions } = require("../../domain/entity/transaction")
 const TransactionInterface = require("../../domain/port/transacctionInterface")
+const paypalAdapter = require("../../payment/paypalAdapter")
+const { getToken } = require("../../payment/paypalClient")
 
 class TransactionRepository extends TransactionInterface{
     async createTransaction(user_id, subscription_id){
         try{
-            const status = 'Paypal' // hardcoded for now
             const subscriptionAux = await Subscription.findOne({where: {user_id: user_id, subscription_id: subscription_id}})
             
             if(!subscriptionAux){
@@ -20,7 +21,6 @@ class TransactionRepository extends TransactionInterface{
                     subscription_id: subscription_id,
                     transaction_date: transaction_date,
                     amount: amount,
-                    status: status || 'Paypal'
                 }
             )
             return transaction
@@ -42,6 +42,44 @@ class TransactionRepository extends TransactionInterface{
         try{
             const transactions = await Transactions.findAll()
             return transactions
+        }catch(err){
+            return null
+        }
+    }
+
+    //CAPTURE TRANSACTION - CONFIRMAR PAGO
+    async updateStatusTransactionsByPaypalId(paypal_payment_id){
+        try{
+            const transaction = await Transactions.findOne({where: {paypal_payment_id: paypal_payment_id}})
+
+            console.log(transaction)
+
+            if(!transaction){
+                return null
+            }
+
+            const token = await getToken()
+            console.log("a")
+
+            const captureResult = await paypalAdapter.capturePayment(paypal_payment_id, token.token_type, token.access_token)
+            if(captureResult.statusText === 'Created'){
+                await transaction.update({status: 'Completed'})
+                await transaction.save()
+
+                const updateSubs = await Subscription.findOne({where: {user_id: transaction.user_id}})
+                if(updateSubs){
+                    await updateSubs.update({status: 'Active'})
+                    await updateSubs.save()
+                }else{
+                    throw new Error('Subscription not found')
+                }
+
+                return transaction
+            }else{
+                await transaction.update({status: 'failed'})
+                await transaction.save()
+                return transaction
+            }
         }catch(err){
             return null
         }
