@@ -8,7 +8,7 @@ class CreateSubscriptionController{
 
     async run(req = Request, res = Response){
         try{
-            const {user_id, plan_id} = req.body
+            const {user_id, plan_id, status} = req.body
             const createdSubscription = await this.createSubscriptionUseCase.run(user_id, plan_id, status)
 
             if(createdSubscription){
