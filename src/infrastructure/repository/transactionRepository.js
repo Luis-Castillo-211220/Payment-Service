@@ -1,8 +1,8 @@
 const { Subscription } = require("../../domain/entity/subscription")
 const { Transactions } = require("../../domain/entity/transaction")
 const TransactionInterface = require("../../domain/port/transacctionInterface")
-const paypalAdapter = require("../../payment/paypalAdapter")
-const { getToken } = require("../../payment/paypalClient")
+const paypalAdapter = require("../Services/paypal/paypalAdapter")
+const { getToken } = require("../Services/paypal/paypalClient")
 
 class TransactionRepository extends TransactionInterface{
     async createTransaction(user_id, subscription_id){

@@ -4,7 +4,7 @@ const { SubscriptionPlan } = require("../../domain/entity/subscriptionPlan")
 const  moment = require("moment")
 const { Transactions } = require("../../domain/entity/transaction")
 const { sequelize } = require("../../database/postgresql")
-const paypalAdapter = require("../../payment/paypalAdapter")
+const paypalAdapter = require("../Services/paypal/paypalAdapter")
 
 class SubscriptionRepository extends SubscriptionInterface{
     async createSubscription(user_id, plan_id, start_date, end_date, status){
