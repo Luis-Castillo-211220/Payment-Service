@@ -13,6 +13,10 @@ const verifySignature = async (req) => {
     const transmissionSig = req.headers['paypal-transmission-sig'];
     const webhookEvent = req.body;
 
+    if (!webhookId || !process.env.PAYPAL_WEBHOOK_SECRET) {
+        throw new Error('Missing PayPal webhook environment variables');
+    }
+
     const expectedSignature = crypto.createHmac('sha256', process.env.PAYPAL_WEBHOOK_SECRET)
         .update(transmissionId + transmissionTime + webhookId + JSON.stringify(webhookEvent))
         .digest('base64');
