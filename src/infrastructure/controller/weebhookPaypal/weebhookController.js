@@ -10,7 +10,7 @@ const paypalWebhook = async (req, res) => {
         const event = req.body;
 
         if (event.event_type === 'CHECKOUT.ORDER.APPROVED') {
-            const paypal_payment_id = event.resource.purchase_units[0].payments.captures[0].id;
+            const paypal_payment_id = event.resource.id;
 
             const updatedTransaction = await updateStatusTransactionsByPaypalId(paypal_payment_id);
 
