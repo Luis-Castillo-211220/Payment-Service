@@ -52,14 +52,11 @@ class TransactionRepository extends TransactionInterface{
         try{
             const transaction = await Transactions.findOne({where: {paypal_payment_id: paypal_payment_id}})
 
-            console.log(transaction)
-
             if(!transaction){
                 return null
             }
 
             const token = await getToken()
-            console.log("a")
 
             const captureResult = await paypalAdapter.capturePayment(paypal_payment_id, token.token_type, token.access_token)
             if(captureResult.statusText === 'Created'){

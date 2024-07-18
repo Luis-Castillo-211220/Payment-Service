@@ -1,7 +1,7 @@
 const { SubscriptionPlanRepository } = require("../repository/subscriptionPlanRepository")
 
 const { CreateSubscriptionPlanUseCase } = require("../../application/subscriptionPlan/createSubscriptionPlanUseCase")
-const { CreateSubscriptionPlanController } = require("../controller/subscriptionPlan/CreateSubscriptionPlanController")
+const { CreateSubscriptionPlanController } = require("../controller/subscriptionPlan/createSubscriptionPlanController")
 const { ListSubscriptionsPlansUseCase } = require("../../application/subscriptionPlan/listSubscriptionPlanUseCase")
 const { ListSubscriptionsPlansController } =  require("../controller/subscriptionPlan/listSubscriptionPlanController")
 const { GetByIdSubscriptionPlanUseCase } = require("../../application/subscriptionPlan/getByIdSubscriptionUseCase")
