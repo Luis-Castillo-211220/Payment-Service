@@ -47,6 +47,6 @@ const Transactions = sequelize.define('Transaction', {
     }
 });
 
-Transactions.belongsTo(Subscription, {foreignKey: 'subscription_id'})
+
 
 module.exports = { Transactions }   

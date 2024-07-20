@@ -9,14 +9,14 @@ class DeleteSubscriptionByIdUserController{
         const { user_id } = req.params
         const deleteSubscription = await this.deleteSubscriptionByIdUserUseCase.run(user_id)
         
-        if(deleteSubscription){
+        if(!deleteSubscription){
             return res.status(200).json({
                 message: "Subscription deleted successfully"
             })
         }else{
             return res.status(404).json({
                 message: "User not found or subscription not found"
-            })
+            })  
         }
     }
 }

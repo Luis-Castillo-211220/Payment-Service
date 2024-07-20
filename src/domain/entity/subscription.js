@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize');
 const { sequelize } = require('../../database/postgresql');
+const { Transactions } = require("./transaction")
 const { SubscriptionPlan } = require('./subscriptionPlan') 
 
 const Subscription = sequelize.define('Subscription', {
@@ -38,5 +39,7 @@ const Subscription = sequelize.define('Subscription', {
 });
 
 Subscription.belongsTo(SubscriptionPlan, {foreignKey: 'plan_id'})
+Subscription.hasMany(Transactions, {foreignKey: "subscription_id", onDelete:"CASCADE"})
+Transactions.hasOne(Subscription, {foreignKey: 'subscription_id'})
 
 module.exports = { Subscription }   

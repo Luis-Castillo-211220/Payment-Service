@@ -5,6 +5,7 @@ const  moment = require("moment")
 const { Transactions } = require("../../domain/entity/transaction")
 const { sequelize } = require("../../database/postgresql")
 const paypalAdapter = require("../Services/paypal/paypalAdapter")
+const { where } = require("sequelize")
 
 class SubscriptionRepository extends SubscriptionInterface{
     async createSubscription(user_id, plan_id, start_date, end_date, status){
@@ -59,7 +60,7 @@ class SubscriptionRepository extends SubscriptionInterface{
             const createdTransaction = await Transactions.create(transactionData, { transaction: transactionInst })
             await transactionInst.commit();
 
-            return createdSubscription
+            return { subscription: createdSubscription, transaction: createdTransaction }
         }catch(err){
             return null
         }
@@ -84,16 +85,19 @@ class SubscriptionRepository extends SubscriptionInterface{
     }
 
     async deleteSubscriptionByIdUser(user_id){
+        const transactionInst = await sequelize.transaction()
         try{
             const subscription = await Subscription.findOne({where: {user_id}})
             if(subscription){
                 await subscription.destroy()
+                await transactionInst.destroyAll({where: {subscription_id: subscription.subscription_id}})
+
                 return true;
             }else{
-                throw new Error('Subscription not found')
+                return false
             }
         }catch(err){
-            throw new Error('Error while deleting subscription')
+            return false
         }
     }
 
